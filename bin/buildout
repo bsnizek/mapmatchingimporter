@@ -2,7 +2,7 @@
 
 import sys
 sys.path[0:0] = [
-    '/Users/besn/git/bikeability_buildout/parts/buildout',
+    '/Users/besn/git/mapmatchingimporter/parts/buildout',
     ]
 
 

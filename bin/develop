@@ -2,10 +2,11 @@
 
 import sys
 sys.path[0:0] = [
-  '/Users/besn/git/bikeability_buildout/eggs/mr.developer-1.17-py2.7.egg',
-  '/Users/besn/git/bikeability_buildout/eggs/zc.buildout-1.4.4-py2.7.egg',
-  '/Users/besn/git/bikeability_buildout/eggs/setuptools-0.6c11-py2.7.egg',
-  ]
+    '/Users/besn/git/mapmatchingimporter/eggs/mr.developer-1.18-py2.7.egg',
+    '/Users/besn/git/mapmatchingimporter/eggs/zc.buildout-1.5.2-py2.7.egg',
+    '/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python',
+    ]
+
 
 import mr.developer.develop
 
