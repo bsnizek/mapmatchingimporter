@@ -88,5 +88,7 @@ class ImportOSM(object):
         self.metadata.drop_all()
         self.metadata.create_all()
         
-    def import GPSTrack(self):
-        
+    def importGPSTrack(self):
+        """
+        """
+        pass
