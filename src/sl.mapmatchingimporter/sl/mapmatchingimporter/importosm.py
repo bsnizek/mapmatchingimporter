@@ -84,7 +84,6 @@ class ImportOSM(object):
         nearstedgedistance = Column(Numeric)
         
         
-        
     GeometryDDL(SourcePoint.__table__)
     GeometryDDL(OsmNode.__table__)
     GeometryDDL(OsmEdge.__table__)
@@ -96,9 +95,20 @@ class ImportOSM(object):
         self.metadata.drop_all()
         self.metadata.create_all()
         
-    def importGPSTrackFromGPS(self):
+    def importGPSTrackFromShape(self, inFile, index=0):
         """
         """
-        pass
+        self.shapeFile = ogr.Open(inFile)
+        if self.shapeFile is None:
+            print "Failed to open " + inFile + ".\n"
+            sys.exit( 1 )
+        else:
+            lyrcount = self.shapeFile.GetLayerCount() # multiple layers indicate a directory 
+            for lyrindex in xrange(lyrcount):
+                lyr = self.shapeFile.GetLayerByIndex(lyrindex)
+                flds = [x.GetName() for x in lyr.schema]
+                import pdb;pdb.set_trace()
+            
+            
     
 ios = ImportOSM()

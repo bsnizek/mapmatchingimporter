@@ -3,7 +3,8 @@
 import sys
 
 sys.path[0:0] = [
-    ,
+    '/Users/besn/git/mapmatchingimporter/eggs/elementtree-1.2.7_20070827_preview-py2.7.egg',
+    '/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python',
     ]
 
 _interactive = True

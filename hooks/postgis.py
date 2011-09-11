@@ -36,9 +36,9 @@ def pre_make(options, buildout):
         proj='%s/lib' % buildout['proj']['location'],
         postgres='%s/lib' % buildout['postgresql']['location']
         )
-    substitute('Makefile.config',
-               'DLFLAGS=-shared',
-               'DLFLAGS=-shared %s' % rpath)
+    #substitute('Makefile.config',
+    #           'DLFLAGS=-shared',
+    #           'DLFLAGS=-shared %s' % rpath)
 
 def pre_make_deb(options, buildout):
     """Custom pre-make hook for patching PostGIS."""

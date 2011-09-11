@@ -36,10 +36,10 @@ def post_make(options, buildout):
                'extra_link_args=EXTRA_LINK_ARGS,',
                'extra_link_args=EXTRA_LINK_ARGS, runtime_library_dirs=%s' % str(rpath))
     
-    cmd = '%s setup.py install' % buildout[buildout['buildout']['python']]['executable']
-    log.info('Installing GDAL python bindings')
+#    cmd = '%s setup.py install' % buildout[buildout['buildout']['python']]['executable']
+#    log.info('Installing GDAL python bindings')
 
-    if os.system(cmd):
-        log.error('Error executing command: %s' % cmd)
-        raise zc.buildout.UserError('System error')
+#    if os.system(cmd):
+#        log.error('Error executing command: %s' % cmd)
+#        raise zc.buildout.UserError('System error')
 
