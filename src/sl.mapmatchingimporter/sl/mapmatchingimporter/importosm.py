@@ -1,3 +1,11 @@
+from geoalchemy import Table, GeometryColumn, Geometry, LineString, Point, GeometryDDL, GeometryExtensionColumn, GeometryCollection, DBSpatialElement, WKTSpatialElement, WKBSpatialElement
+from geoalchemy.postgis import PGComparator, pg_functions
+from osgeo import ogr,osr
+from random import random
+from sqlalchemy import create_engine, MetaData, Column, Integer, Numeric, String, Boolean, Sequence, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, mapper
+
 from config import *
 
 class ImportOSM(object):
@@ -88,7 +96,9 @@ class ImportOSM(object):
         self.metadata.drop_all()
         self.metadata.create_all()
         
-    def importGPSTrack(self):
+    def importGPSTrackFromGPS(self):
         """
         """
         pass
+    
+ios = ImportOSM()
