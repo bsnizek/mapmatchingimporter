@@ -26,6 +26,7 @@ setup(name='sl.mapmatchingimporter',
       install_requires=[
           'setuptools',
           'SQLAlchemy',
+          'geoalchemy',
           'gdal'
           # -*- Extra requirements: -*-
       ],

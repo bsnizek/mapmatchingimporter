@@ -12,6 +12,9 @@ def substitute(filename, search_re, replacement):
     ``search_re`` with ``replacement``.
     """
     search = re.compile(search_re, re.MULTILINE)
+    
+    import pdb;pdb.set_trace()
+    
     text = open(filename).read()
     text = replacement.join(search.split(text))
     
@@ -32,14 +35,15 @@ def post_make(options, buildout):
              ] + ['%s/lib' % options['location']]
 
     # ..and push it into the setup file
-    substitute('setup.py',
+
+    substitute('swig/python/setup.py',
                'extra_link_args=EXTRA_LINK_ARGS,',
                'extra_link_args=EXTRA_LINK_ARGS, runtime_library_dirs=%s' % str(rpath))
     
-#    cmd = '%s setup.py install' % buildout[buildout['buildout']['python']]['executable']
-#    log.info('Installing GDAL python bindings')
+    cmd = 'cd swig/python; %s setup.py install' % buildout[buildout['buildout']['python']]['executable']
+    log.info('Installing GDAL python bindings')
 
-#    if os.system(cmd):
-#        log.error('Error executing command: %s' % cmd)
-#        raise zc.buildout.UserError('System error')
+    if os.system(cmd):
+        log.error('Error executing command: %s' % cmd)
+        raise zc.buildout.UserError('System error')
 

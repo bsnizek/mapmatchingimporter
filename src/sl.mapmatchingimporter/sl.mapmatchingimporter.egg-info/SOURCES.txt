@@ -1,0 +1,16 @@
+README.txt
+setup.cfg
+setup.py
+sl/__init__.py
+sl.mapmatchingimporter.egg-info/PKG-INFO
+sl.mapmatchingimporter.egg-info/README.txt
+sl.mapmatchingimporter.egg-info/SOURCES.txt
+sl.mapmatchingimporter.egg-info/dependency_links.txt
+sl.mapmatchingimporter.egg-info/entry_points.txt
+sl.mapmatchingimporter.egg-info/namespace_packages.txt
+sl.mapmatchingimporter.egg-info/not-zip-safe
+sl.mapmatchingimporter.egg-info/requires.txt
+sl.mapmatchingimporter.egg-info/top_level.txt
+sl/mapmatchingimporter/__init__.py
+sl/mapmatchingimporter/config.py
+sl/mapmatchingimporter/importosm.py
