@@ -27,7 +27,6 @@ setup(name='sl.mapmatchingimporter',
           'setuptools',
           'SQLAlchemy',
           'geoalchemy',
-          'gdal'
           # -*- Extra requirements: -*-
       ],
       entry_points="""

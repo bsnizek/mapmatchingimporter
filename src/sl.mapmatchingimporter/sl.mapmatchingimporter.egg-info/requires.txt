@@ -1,4 +1,3 @@
 setuptools
 SQLAlchemy
 geoalchemy
-gdal

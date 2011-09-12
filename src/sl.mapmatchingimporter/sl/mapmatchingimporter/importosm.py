@@ -1,5 +1,10 @@
+NO_COMPARATOR = False
+
 from geoalchemy import Table, GeometryColumn, Geometry, LineString, Point, GeometryDDL, GeometryExtensionColumn, GeometryCollection, DBSpatialElement, WKTSpatialElement, WKBSpatialElement
-from geoalchemy.postgis import PGComparator, pg_functions
+try:
+    from geoalchemy.postgis import PGComparator
+except:
+    NO_COMPARATOR=True
 from osgeo import ogr,osr
 from random import random
 from sqlalchemy import create_engine, MetaData, Column, Integer, Numeric, String, Boolean, Sequence, ForeignKey
@@ -7,6 +12,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, mapper
 
 from config import *
+
+import sys
 
 class ImportOSM(object):
     """The importer 
@@ -49,26 +56,41 @@ class ImportOSM(object):
         the_geom = GeometryColumn(Geometry(2), comparator=PGComparator, nullable=True)
         sourcerouteid = Column(Integer, ForeignKey("sourceroute.id"))
         
+        
+        def __init__(self, geometry):
+            self.the_geom = geometry
+        
     class OsmNode(Base):
         """
         """
         __tablename__ = "osmnode"
         id = Column(Integer, primary_key=True)
-        the_geom = GeometryColumn(Geometry(1), comparator=PGComparator, nullable=True)
+        the_geom = GeometryColumn(Geometry(2), comparator=PGComparator, nullable=True)
+
+        def __init__(self, geometry):
+            self.the_geom = geometry
         
+             
     class OsmEdge(Base):
         """
         """
         __tablename__ = "osmedge"
         id = Column(Integer, primary_key=True)
         the_geom = GeometryColumn(Geometry(2), comparator=PGComparator, nullable=True)
+            
+        def __init__(self, geometry):
+            self.the_geom = geometry
+            
         
     class ResultRoute(Base):
         """
         """
         __tablename__ = "resultroute"
         id = Column(Integer, primary_key=True)
-        the_geom = GeometryColumn(Geometry(2), comparator=PGComparator, nullable=True)
+        if NO_COMPARATOR:
+            the_geom = GeometryColumn(Geometry(2), nullable=True)
+        else:
+            the_geom = GeometryColumn(Geometry(2), comparator=PGComparator, nullable=True)
         sourcerouteid = Column(Integer, ForeignKey("sourceroute.id"))
         selected = Column(Boolean)
         length = Column(Numeric)
@@ -95,20 +117,67 @@ class ImportOSM(object):
         self.metadata.drop_all()
         self.metadata.create_all()
         
-    def importGPSTrackFromShape(self, inFile, index=0):
+    def getfieldinfo(self, lyr, feature, flds):
+            f = feature
+            return [f.GetField(f.GetFieldIndex(x)) for x in flds]
+        
+    def importGPSTrackFromShape(self, inFile):
         """
         """
-        self.shapeFile = ogr.Open(inFile)
-        if self.shapeFile is None:
+        shapeFile = ogr.Open(inFile)
+        if shapeFile is None:
             print "Failed to open " + inFile + ".\n"
             sys.exit( 1 )
         else:
-            lyrcount = self.shapeFile.GetLayerCount() # multiple layers indicate a directory 
+            lyrcount = shapeFile.GetLayerCount() # multiple layers indicate a directory 
             for lyrindex in xrange(lyrcount):
-                lyr = self.shapeFile.GetLayerByIndex(lyrindex)
-                flds = [x.GetName() for x in lyr.schema]
-                import pdb;pdb.set_trace()
-            
+                lyr = shapeFile.GetLayerByIndex(lyrindex)
+                fields = [x.GetName() for x in lyr.schema]
+                for findex in xrange(lyr.GetFeatureCount()):
+                    f = lyr.GetFeature(findex)
+                    flddata = self.getfieldinfo(lyr, f, fields)
+                    coord = f.GetGeometryRef().GetPoint()
+                    # attributes = dict(zip(fields, flddata))
+                    # import pdb;pdb.set_trace()
+                    
+                    
+                    pt = ogr.Geometry(ogr.wkbPoint)
+                    pt.SetPoint_2D(0, coord[0], coord[1])
+
+                    feat = ogr.Feature( lyr.GetLayerDefn())
+                    feat.SetGeometryDirectly(pt)
+                    
+                    # import pdb;pdb.set_trace()
+                    sourcepoint = self.SourcePoint(feat.GetGeometryRef().ExportToWkt())
+                    self.session.add(sourcepoint)
+                    
+            self.session.commit()
+            print "GPS Track loaded into database."
+        
+    def importRoadNetwork(self, inFile):
+        """
+        """
+        shapeFile = ogr.Open(inFile)
+        if shapeFile is None:
+            print "Failed to open " + inFile + ".\n"
+            sys.exit( 1 )
+        else:
+            lyrcount = shapeFile.GetLayerCount() # multiple layers indicate a directory 
+            for lyrindex in xrange(lyrcount):
+                lyr = shapeFile.GetLayerByIndex(lyrindex)
+                fields = [x.GetName() for x in lyr.schema]
+                for findex in xrange(lyr.GetFeatureCount()):
+                    f = lyr.GetFeature(findex)
+                    flddata = self.getfieldinfo(lyr, f, fields)
+                    geometry = f.GetGeometryRef()
+                    osmedge = self.OsmEdge(geometry.ExportToWkt())
+                    self.session.add(osmedge)
+            self.session.commit()
+            print "OSM Edges loaded into database."
+        
             
     
 ios = ImportOSM()
+ios.createTables()
+ios.importGPSTrackFromShape("/Users/besn/git/mapmatchingimporter/testdata")
+ios.importRoadNetwork("/Users/besn/git/mapmatchingimporter/testdata/Sparse_bigger0.shp")
